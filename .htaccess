@@ -1,0 +1,4 @@
+# Forzar HTTPS y quitar WWW
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\.codexacore\.com$ [NC]
+RewriteRule ^(.*)$ https://codexacore.com/$1 [L,R=301]
