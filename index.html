@@ -21,35 +21,33 @@
 <body
     class="bg-background text-on-surface font-body-md overflow-x-hidden selection:bg-primary-container selection:text-white">
     <!-- Hero Section -->
-    <header
-        class="relative min-h-screen flex flex-col items-center justify-center bg-[#303030] px-gutter overflow-hidden"
-        id="hero">
+    <header id="hero" class="relative bg-[#303030] px-gutter overflow-visible">
         <div class="absolute inset-0 hero-gradient" id="hero-glow"></div>
-        <div class="relative z-10 animate-fade-in text-center max-w-4xl" id="hero-content">
-            <!-- Center Logo -->
-            <div class="mb-12 flex justify-center" id="hero-logo-container">
-                <div class="w-full max-w-[450px] md:max-w-[600px] purple-glow">
-                    <img src="./img/codexa.svg" alt="Codexa Core">
-                </div>
-            </div>
-            <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface mb-6">Creamos páginas web y
-                soluciones digitales de alto impacto</h1>
-            <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10">Desarrollamos ecosistemas digitales
-                premium para empresas que buscan liderar su mercado con tecnología de vanguardia.</p>
+
+        <div class="relative z-10 text-center max-w-4xl" id="hero-content">
+            <h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface mb-6">
+                Creamos páginas web y soluciones digitales de alto impacto
+            </h1>
+
+            <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
+                Desarrollamos ecosistemas digitales premium para empresas que buscan liderar su mercado con tecnología
+                de vanguardia.
+            </p>
+
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="#paquetes"
                     class="bg-primary-container text-white px-8 py-4 rounded-xl font-body-md font-bold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary-container/20">
                     Iniciar Proyecto
                 </a>
+
                 <button
                     class="bg-white/5 border border-white/10 text-on-surface px-8 py-4 rounded-xl font-body-md font-bold hover:bg-white/10 transition-all backdrop-blur-md">
                     Ver Portafolio
                 </button>
             </div>
         </div>
-        <!-- Scroll Indicator -->
-        <div
-            class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center gap-2 opacity-50">
+
+        <div id="explore-indicator">
             <span class="text-label-caps font-label-caps">Explorar</span>
             <span class="material-symbols-outlined">expand_more</span>
         </div>
