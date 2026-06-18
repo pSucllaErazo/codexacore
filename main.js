@@ -10,95 +10,78 @@ hero.addEventListener('mousemove', (e) => {
 
 // Scroll Logic: Navbar visibility and Logo Morphing
 
-const mainNav = document.getElementById('main-nav');
-const morphedLogo = document.getElementById('morphed-logo-container');
-const heroContent = document.getElementById('hero-content');
-const exploreIndicator = document.getElementById('explore-indicator');
+if (hero) {
+    hero.addEventListener('mousemove', (event) => {
+        const rect = hero.getBoundingClientRect();
 
-function clamp(value, min = 0, max = 1) {
-    return Math.min(Math.max(value, min), max);
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+        hero.style.setProperty('--mouse-x', `${x}%`);
+        hero.style.setProperty('--mouse-y', `${y}%`);
+    });
+
+    hero.addEventListener('mouseleave', () => {
+        hero.style.setProperty('--mouse-x', `35%`);
+        hero.style.setProperty('--mouse-y', `45%`);
+    });
 }
 
-function smoothStep(value) {
-    return value * value * (3 - 2 * value);
+// --- Intro automática del logo ---
+let introFinished = false;
+let introTimer = null;
+let cleanupTimer = null;
+
+
+function finishIntro(skipped = false) {
+    if (introFinished) return;
+
+    introFinished = true;
+
+    if (skipped) {
+        document.body.classList.add('intro-skipped');
+    }
+
+    document.body.classList.remove('logo-intro');
+    document.body.classList.add('logo-ready');
+
+    clearTimeout(introTimer);
+    clearTimeout(cleanupTimer);
+
+    cleanupTimer = setTimeout(() => {
+        document.body.classList.remove('intro-skipped');
+    }, skipped ? 600 : 1200);
 }
 
-function getHeroProgress() {
-    const heroRect = hero.getBoundingClientRect();
-    const scrollableDistance = hero.offsetHeight - window.innerHeight;
+window.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('logo-intro');
 
-    if (scrollableDistance <= 0) return 1;
+    introTimer = setTimeout(() => {
+        finishIntro(false);
+    }, 1250);
 
-    const scrolledInsideHero = clamp(-heroRect.top, 0, scrollableDistance);
+    cleanupTimer = setTimeout(() => {
+        document.body.classList.remove('logo-intro');
+    }, 1700);
+});
 
-    return scrolledInsideHero / scrollableDistance;
-}
+// Si el usuario intenta avanzar antes de que termine la intro,
+// cerramos la intro y dejamos todo listo.
+window.addEventListener('wheel', () => {
+    finishIntro(true);
+}, { passive: true });
 
-function handleHeroScroll() {
-    const progress = getHeroProgress();
-    const eased = smoothStep(progress);
+window.addEventListener('touchmove', () => {
+    finishIntro(true);
+}, { passive: true });
 
-    const startWidth = Math.min(620, window.innerWidth * 0.82);
-    const endWidth = window.innerWidth <= 768 ? 110 : 128;
+window.addEventListener('keydown', (event) => {
+    const scrollKeys = ['ArrowDown', 'PageDown', ' ', 'End'];
 
-    const startLeft = window.innerWidth / 2;
-    const startTop = window.innerHeight / 2;
-
-    const navLeft = window.innerWidth <= 768
-        ? 24
-        : Math.max(24, (window.innerWidth - 1280) / 2 + 24);
-
-    const navTop = 40;
-
-    const currentLeft = startLeft + (navLeft - startLeft) * eased;
-    const currentTop = startTop + (navTop - startTop) * eased;
-    const currentWidth = startWidth + (endWidth - startWidth) * eased;
-
-    if (morphedLogo) {
-        morphedLogo.style.left = `${currentLeft}px`;
-        morphedLogo.style.top = `${currentTop}px`;
-        morphedLogo.style.width = `${currentWidth}px`;
-
-        const translateX = -50 + (50 * eased);
-        morphedLogo.style.transform = `translate(${translateX}%, -50%)`;
+    if (scrollKeys.includes(event.key)) {
+        finishIntro(true);
     }
-
-    // El texto aparece cuando el logo ya empezó a subir.
-    const enterProgress = clamp((progress - 0.50) / 0.1);
-
-
-    const contentOpacity = enterProgress
-    const contentY = 36 * (1 - enterProgress)
-
-    if (heroContent) {
-        heroContent.style.opacity = contentOpacity;
-        heroContent.style.transform = `translateY(${contentY}px)`;
-
-        if (contentOpacity > 0.15) {
-            heroContent.classList.add('hero-content-active');
-        } else {
-            heroContent.classList.remove('hero-content-active');
-        }
-    }
-
-    // "Explorar" solo se ve al inicio.
-    if (exploreIndicator) {
-        const exploreOpacity = clamp(1 - progress / 0.25);
-        exploreIndicator.style.opacity = exploreOpacity * 0.5;
-    }
-
-    // Navbar aparece cuando el logo ya casi llegó.
-    if (progress > 0.72) {
-        mainNav.classList.add('visible');
-    } else {
-        mainNav.classList.remove('visible');
-    }
-}
-handleHeroScroll();
-window.addEventListener('scroll', handleHeroScroll, { passive: true });
-window.addEventListener('resize', handleHeroScroll);
-
-
+});
 
 // const mainNav = document.getElementById('main-nav');
 // const heroLogo = document.getElementById('hero-logo-container');
