@@ -1,0 +1,236 @@
+#hero {
+    min-height: 185svh !important;
+    height: auto !important;
+    position: relative;
+    overflow: visible !important;
+}
+
+#hero-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    width: 100%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#hero-content {
+    opacity: 0;
+    transform: translateY(36px);
+    pointer-events: none;
+    z-index: 20;
+    will-change: opacity, transform;
+}
+
+#hero-content.hero-content-active {
+    pointer-events: auto;
+}
+
+#explore-indicator {
+    position: absolute;
+    bottom: 32px;
+    transform: translateX(-50%);
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    opacity: 0.5;
+    animation: bounce 1s infinite;
+}
+
+#morphed-logo-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: min(620px, 82vw);
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    pointer-events: none;
+    filter: drop-shadow(0 0 35px rgba(144, 40, 233, 0.45));
+    will-change: top, left, width, transform, opacity;
+}
+
+#morphed-logo-container img {
+    width: 100%;
+    display: block;
+}
+
+#main-nav {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+#main-nav.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+    #morphed-logo-container {
+        width: min(360px, 82vw);
+    }
+}
+
+/* Luz morada difuminada inicial */
+#morphed-logo-container {
+    overflow: visible;
+    isolation: isolate;
+}
+
+#morphed-logo-container img {
+    position: relative;
+    z-index: 2;
+}
+
+#morphed-logo-container::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -45%;
+    width: 55%;
+    height: 180%;
+    z-index: 1;
+    pointer-events: none;
+
+    background: radial-gradient(
+        circle,
+        rgba(144, 40, 233, 0.65) 0%,
+        rgba(144, 40, 233, 0.38) 28%,
+        rgba(144, 40, 233, 0.18) 48%,
+        transparent 72%
+    );
+
+    filter: blur(28px);
+    transform: translateY(-50%) scale(1.35);
+    opacity: 0;
+
+    animation: codexa-soft-purple-glow 1s ease-in-out 0.25s infinite  alternate both;
+}
+
+#morphed-logo-container.logo-in-navbar::before {
+    animation: none;
+    opacity: 0;
+}
+
+
+@keyframes codexa-soft-purple-glow {
+    0% {
+        left: -45%;
+        opacity: 0;
+        transform: translateY(-50%) scale(1.15);
+    }
+
+    18% {
+        opacity: 1;
+    }
+
+    52% {
+        opacity: 0.9;
+    }
+
+    100% {
+        left: 95%;
+        opacity: 0;
+        transform: translateY(-50%) scale(1.45);
+    }
+}
+
+
+#social-floating {
+    position: fixed;
+    top: 50px;
+    right: 150px;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    opacity: 0;
+    transform: translateY(-8px);
+    animation: socialFadeIn 0.8s ease forwards;
+    animation-delay: 0.6s;
+
+    transition:
+        opacity 0.45s ease,
+        transform 0.45s ease,
+        visibility 0.45s ease;
+}
+
+#social-floating a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(242, 222, 255, 0.82);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    transition:
+        color 0.25s ease,
+        transform 0.25s ease,
+        filter 0.25s ease;
+}
+
+#social-floating a svg {
+    width: 30px;
+    height: 30px;
+    display: block;
+    fill: currentColor;
+}
+
+#social-floating a:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+    filter: drop-shadow(0 0 10px rgba(144, 40, 233, 0.85));
+}
+
+#social-floating.socials-hidden {
+    opacity: 0 !important;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+}
+
+@keyframes socialFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (max-width: 768px) {
+    #social-floating {
+        top: 24px;
+        right: 22px;
+        gap: 14px;
+    }
+
+    #social-floating a {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    #social-floating a svg {
+        width: 18px !important;
+        height: 18px !important;
+        min-width: 18px !important;
+        max-width: 18px !important;
+        min-height: 18px !important;
+        max-height: 18px !important;
+    }
+}
