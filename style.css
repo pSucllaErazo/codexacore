@@ -1,11 +1,15 @@
+/* =========================
+   HERO / LOGO MORPHING
+========================= */
+
 #hero {
-    min-height: 100svh !important;
-    height: 100svh !important;
+    min-height: 185svh !important;
+    height: auto !important;
     position: relative;
-    overflow: hidden !important;
+    overflow: visible !important;
 }
 
-/* Difuminado morado que sigue el cursor */
+/* Fondo morado que sigue el cursor */
 .hero-gradient {
     background:
         radial-gradient(
@@ -19,7 +23,20 @@
     z-index: 0;
 }
 
-/* Logo flotante inicial */
+/* Si usas hero-stage */
+#hero-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    width: 100%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Logo flotante */
 #morphed-logo-container {
     position: fixed;
     top: 50%;
@@ -30,12 +47,7 @@
     pointer-events: none;
     overflow: visible;
     filter: drop-shadow(0 0 35px rgba(144, 40, 233, 0.45));
-    transition:
-        top 0.95s cubic-bezier(0.4, 0, 0.2, 1),
-        left 0.95s cubic-bezier(0.4, 0, 0.2, 1),
-        width 0.95s cubic-bezier(0.4, 0, 0.2, 1),
-        transform 0.95s cubic-bezier(0.4, 0, 0.2, 1),
-        filter 0.95s ease;
+    will-change: top, left, width, transform;
 }
 
 #morphed-logo-container img {
@@ -45,16 +57,7 @@
     display: block;
 }
 
-/* Estado final: logo dentro del navbar */
-body.logo-ready #morphed-logo-container {
-    top: 40px;
-    left: calc(max(24px, (100vw - 1280px) / 2 + 24px));
-    width: 128px;
-    transform: translate(0, -50%);
-    filter: drop-shadow(0 0 12px rgba(144, 40, 233, 0.25));
-}
-
-/* Barrido de luz morada */
+/* Luz morada que cruza Codexa */
 #morphed-logo-container::before {
     content: "";
     position: absolute;
@@ -80,12 +83,19 @@ body.logo-ready #morphed-logo-container {
     transform: translateX(-140%) skewX(-18deg);
 }
 
-body.logo-intro #morphed-logo-container::before {
-    animation: codexaLightSweep 1.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+/* Intro visual inicial */
+#morphed-logo-container.logo-intro::before {
+    animation: codexaLightSweep 1.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-body.logo-intro #morphed-logo-container img {
-    animation: codexaIntroPulse 1.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+#morphed-logo-container.logo-intro img {
+    animation: codexaIntroPulse 1.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Si el usuario scrollea, cortamos la intro */
+#morphed-logo-container.intro-stopped::before,
+#morphed-logo-container.intro-stopped img {
+    animation: none !important;
 }
 
 @keyframes codexaLightSweep {
@@ -94,7 +104,7 @@ body.logo-intro #morphed-logo-container img {
         transform: translateX(-140%) skewX(-18deg);
     }
 
-    20% {
+    18% {
         opacity: 1;
     }
 
@@ -112,52 +122,36 @@ body.logo-intro #morphed-logo-container img {
 @keyframes codexaIntroPulse {
     0% {
         transform: scale(1);
+        filter: drop-shadow(0 0 20px rgba(144, 40, 233, 0.25));
     }
 
     45% {
         transform: scale(1.045);
+        filter:
+            drop-shadow(0 0 18px rgba(255, 255, 255, 0.25))
+            drop-shadow(0 0 45px rgba(144, 40, 233, 0.75));
     }
 
     100% {
         transform: scale(1);
+        filter: drop-shadow(0 0 28px rgba(144, 40, 233, 0.35));
     }
 }
 
-/* Navbar oculto al inicio */
-#main-nav {
-    opacity: 0;
-    transform: translateY(-12px);
-    pointer-events: none;
-    transition:
-        opacity 0.45s ease,
-        transform 0.45s ease;
-}
-
-body.logo-ready #main-nav {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-    transition-delay: 0.25s;
-}
-
-/* Texto del hero oculto al inicio */
+/* Texto del hero */
 #hero-content {
     opacity: 0;
     transform: translateY(36px);
     pointer-events: none;
-    transition:
-        opacity 0.75s ease,
-        transform 0.75s ease;
+    z-index: 20;
+    will-change: opacity, transform;
 }
 
-body.logo-ready #hero-content {
-    opacity: 1;
-    transform: translateY(0);
+#hero-content.hero-content-active {
     pointer-events: auto;
-    transition-delay: 0.55s;
 }
 
-/* Explorar abajo desde el inicio */
+/* Indicador explorar */
 #explore-indicator {
     position: absolute;
     bottom: 32px;
@@ -174,36 +168,29 @@ body.logo-ready #hero-content {
     animation: bounce 1s infinite;
 }
 
-/* Si el usuario scrollea antes, aceleramos el cierre de intro */
-body.intro-skipped #morphed-logo-container {
-    transition-duration: 0.35s;
+/* Navbar oculto al inicio */
+#main-nav {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-body.intro-skipped #main-nav,
-body.intro-skipped #hero-content {
-    transition-delay: 0s !important;
+#main-nav.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 @media (max-width: 768px) {
     #morphed-logo-container {
         width: min(360px, 82vw);
     }
-
-    body.logo-ready #morphed-logo-container {
-        width: 110px;
-        left: 24px;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #morphed-logo-container,
-    #main-nav,
-    #hero-content {
-        transition: none !important;
-    }
-
-    body.logo-intro #morphed-logo-container::before,
-    body.logo-intro #morphed-logo-container img {
+    #morphed-logo-container.logo-intro::before,
+    #morphed-logo-container.logo-intro img {
         animation: none !important;
     }
 }

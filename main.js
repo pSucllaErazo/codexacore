@@ -22,66 +22,160 @@ if (hero) {
     });
 
     hero.addEventListener('mouseleave', () => {
-        hero.style.setProperty('--mouse-x', `35%`);
-        hero.style.setProperty('--mouse-y', `45%`);
+        hero.style.setProperty('--mouse-x', '35%');
+        hero.style.setProperty('--mouse-y', '45%');
     });
 }
 
-// --- Intro automática del logo ---
-let introFinished = false;
-let introTimer = null;
-let cleanupTimer = null;
 
+// =========================
+// LOGO INTRO VISUAL
+// =========================
 
-function finishIntro(skipped = false) {
-    if (introFinished) return;
+const morphedLogo = document.getElementById('morphed-logo-container');
 
-    introFinished = true;
+let logoIntroActive = false;
+let logoIntroTimer = null;
+let logoIntroPlayed = false;
 
-    if (skipped) {
-        document.body.classList.add('intro-skipped');
-    }
+function startLogoIntro() {
+    if (!morphedLogo || logoIntroPlayed) return;
 
-    document.body.classList.remove('logo-intro');
-    document.body.classList.add('logo-ready');
+    logoIntroPlayed = true;
+    logoIntroActive = true;
 
-    clearTimeout(introTimer);
-    clearTimeout(cleanupTimer);
+    morphedLogo.classList.remove('intro-stopped');
+    morphedLogo.classList.add('logo-intro');
 
-    cleanupTimer = setTimeout(() => {
-        document.body.classList.remove('intro-skipped');
-    }, skipped ? 600 : 1200);
+    clearTimeout(logoIntroTimer);
+
+    logoIntroTimer = setTimeout(() => {
+        logoIntroActive = false;
+        morphedLogo.classList.remove('logo-intro');
+    }, 1400);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    document.body.classList.add('logo-intro');
+function stopLogoIntro() {
+    if (!morphedLogo || !logoIntroActive) return;
 
-    introTimer = setTimeout(() => {
-        finishIntro(false);
-    }, 1250);
+    logoIntroActive = false;
 
-    cleanupTimer = setTimeout(() => {
-        document.body.classList.remove('logo-intro');
-    }, 1700);
-});
+    morphedLogo.classList.remove('logo-intro');
+    morphedLogo.classList.add('intro-stopped');
 
-// Si el usuario intenta avanzar antes de que termine la intro,
-// cerramos la intro y dejamos todo listo.
-window.addEventListener('wheel', () => {
-    finishIntro(true);
-}, { passive: true });
+    clearTimeout(logoIntroTimer);
 
-window.addEventListener('touchmove', () => {
-    finishIntro(true);
-}, { passive: true });
+    setTimeout(() => {
+        morphedLogo.classList.remove('intro-stopped');
+    }, 120);
+}
 
-window.addEventListener('keydown', (event) => {
-    const scrollKeys = ['ArrowDown', 'PageDown', ' ', 'End'];
+// Intro inicial una sola vez
+startLogoIntro();
 
-    if (scrollKeys.includes(event.key)) {
-        finishIntro(true);
+
+// =========================
+// SCROLL LOGIC: LOGO MORPHING
+// =========================
+
+const mainNav = document.getElementById('main-nav');
+const heroContent = document.getElementById('hero-content');
+const exploreIndicator = document.getElementById('explore-indicator');
+
+function clamp(value, min = 0, max = 1) {
+    return Math.min(Math.max(value, min), max);
+}
+
+function smoothStep(value) {
+    return value * value * (3 - 2 * value);
+}
+
+function getHeroProgress() {
+    if (!hero) return 0;
+
+    const heroRect = hero.getBoundingClientRect();
+    const scrollableDistance = hero.offsetHeight - window.innerHeight;
+
+    if (scrollableDistance <= 0) return 0;
+
+    const scrolledInsideHero = clamp(-heroRect.top, 0, scrollableDistance);
+
+    return scrolledInsideHero / scrollableDistance;
+}
+
+function handleHeroScroll() {
+    // Si el usuario scrollea durante la intro, cortamos solo la intro visual.
+    // El movimiento del logo sigue dependiendo del scroll.
+    if (window.scrollY > 8) {
+        stopLogoIntro();
     }
-});
+
+    const progress = getHeroProgress();
+    const eased = smoothStep(progress);
+
+    const startWidth = Math.min(620, window.innerWidth * 0.82);
+    const endWidth = window.innerWidth <= 768 ? 110 : 128;
+
+    const startLeft = window.innerWidth / 2;
+    const startTop = window.innerHeight / 2;
+
+    const navLeft = window.innerWidth <= 768
+        ? 24
+        : Math.max(24, (window.innerWidth - 1280) / 2 + 24);
+
+    const navTop = 40;
+
+    const currentLeft = startLeft + (navLeft - startLeft) * eased;
+    const currentTop = startTop + (navTop - startTop) * eased;
+    const currentWidth = startWidth + (endWidth - startWidth) * eased;
+
+    if (morphedLogo) {
+        morphedLogo.style.left = `${currentLeft}px`;
+        morphedLogo.style.top = `${currentTop}px`;
+        morphedLogo.style.width = `${currentWidth}px`;
+
+        const translateX = -50 + (50 * eased);
+        morphedLogo.style.transform = `translate(${translateX}%, -50%)`;
+    }
+
+    // Texto del hero:
+    // aparece cuando el logo ya empezó a subir y se mantiene visible.
+    const enterProgress = clamp((progress - 0.32) / 0.30);
+
+    const contentOpacity = enterProgress;
+    const contentY = 36 * (1 - enterProgress);
+
+    if (heroContent) {
+        heroContent.style.opacity = contentOpacity;
+        heroContent.style.transform = `translateY(${contentY}px)`;
+
+        if (contentOpacity > 0.15) {
+            heroContent.classList.add('hero-content-active');
+        } else {
+            heroContent.classList.remove('hero-content-active');
+        }
+    }
+
+    // Explorar desaparece suavemente cuando empieza el movimiento.
+    if (exploreIndicator) {
+        const exploreOpacity = clamp(1 - progress / 0.25);
+        exploreIndicator.style.opacity = exploreOpacity * 0.5;
+    }
+
+    // Navbar aparece cuando el logo casi llegó arriba.
+    if (mainNav) {
+        if (progress > 0.72) {
+            mainNav.classList.add('visible');
+        } else {
+            mainNav.classList.remove('visible');
+        }
+    }
+}
+
+window.addEventListener('scroll', handleHeroScroll, { passive: true });
+window.addEventListener('resize', handleHeroScroll);
+
+handleHeroScroll();
 
 // const mainNav = document.getElementById('main-nav');
 // const heroLogo = document.getElementById('hero-logo-container');
