@@ -63,7 +63,7 @@ function handleHeroScroll() {
         morphedLogo.style.transform = `translate(${translateX}%, -50%)`;
     }
 
-    // El texto aparece cuando el logo ya empezó a subir.
+    // El texto aparece cuando el logo ya empez贸 a subir.
     const enterProgress = clamp((progress - 0.50) / 0.1);
 
 
@@ -87,7 +87,7 @@ function handleHeroScroll() {
         exploreIndicator.style.opacity = exploreOpacity * 0.5;
     }
 
-    // Navbar aparece cuando el logo ya casi llegó.
+    // Navbar aparece cuando el logo ya casi lleg贸.
     if (progress > 0.72) {
         mainNav.classList.add('visible');
     } else {
@@ -104,31 +104,31 @@ window.addEventListener('resize', handleHeroScroll);
 // const heroLogo = document.getElementById('hero-logo-container');
 // const heroContent = document.getElementById('hero-content');
 
-window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
+// window.addEventListener('scroll', () => {
+//     const scrollY = window.scrollY;
 
-    // Navbar appearance
-    if (scrollY > 150) {
-        mainNav.classList.add('visible');
-    } else {
-        mainNav.classList.remove('visible');
-    }
+//     // Navbar appearance
+//     if (scrollY > 150) {
+//         mainNav.classList.add('visible');
+//     } else {
+//         mainNav.classList.remove('visible');
+//     }
 
-    // Hero Logo Morphing (Simple fade out and scale down as user scrolls)
-    const morphThreshold = 300;
-    const progress = Math.min(scrollY / morphThreshold, 1);
+//     // Hero Logo Morphing (Simple fade out and scale down as user scrolls)
+//     const morphThreshold = 300;
+//     const progress = Math.min(scrollY / morphThreshold, 1);
 
-    if (heroLogo) {
-        heroLogo.style.opacity = 1 - progress;
-        heroLogo.style.transform = `scale(${1 - progress * 0.5}) translateY(-${progress * 50}px)`;
+//     if (heroLogo) {
+//         heroLogo.style.opacity = 1 - progress;
+//         heroLogo.style.transform = `scale(${1 - progress * 0.5}) translateY(-${progress * 50}px)`;
 
-        if (progress >= 1) {
-            heroLogo.style.visibility = 'hidden';
-        } else {
-            heroLogo.style.visibility = 'visible';
-        }
-    }
-});
+//         if (progress >= 1) {
+//             heroLogo.style.visibility = 'hidden';
+//         } else {
+//             heroLogo.style.visibility = 'visible';
+//         }
+//     }
+// });
 
 // Fade-in animations on scroll
 const observerOptions = {

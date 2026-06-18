@@ -1,0 +1,82 @@
+#hero {
+    min-height: 185svh !important;
+    height: auto !important;
+    position: relative;
+    overflow: visible !important;
+}
+
+#hero-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    width: 100%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#hero-content {
+    opacity: 0;
+    transform: translateY(36px);
+    pointer-events: none;
+    z-index: 20;
+    will-change: opacity, transform;
+}
+
+#hero-content.hero-content-active {
+    pointer-events: auto;
+}
+
+#explore-indicator {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    opacity: 0.5;
+    animation: bounce 1s infinite;
+}
+
+#morphed-logo-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: min(620px, 82vw);
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    pointer-events: none;
+    filter: drop-shadow(0 0 35px rgba(144, 40, 233, 0.45));
+    will-change: top, left, width, transform, opacity;
+}
+
+#morphed-logo-container img {
+    width: 100%;
+    display: block;
+}
+
+#main-nav {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+#main-nav.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+    #morphed-logo-container {
+        width: min(360px, 82vw);
+    }
+}
