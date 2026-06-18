@@ -1,5 +1,7 @@
 // Mouse tracking glow effect
 const hero = document.getElementById('hero');
+const heroSocials = document.getElementById('social-floating');
+
 hero.addEventListener('mousemove', (e) => {
     const rect = hero.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -63,6 +65,13 @@ function handleHeroScroll() {
         morphedLogo.style.transform = `translate(${translateX}%, -50%)`;
     }
 
+    // Apagar luz morada cuando el logo ya está prácticamente en el navbar
+    if (progress > 0.80) {
+        morphedLogo.classList.add('logo-in-navbar');
+    } else {
+        morphedLogo.classList.remove('logo-in-navbar');
+    }
+
     // El texto aparece cuando el logo ya empez贸 a subir.
     const enterProgress = clamp((progress - 0.50) / 0.1);
 
@@ -93,42 +102,18 @@ function handleHeroScroll() {
     } else {
         mainNav.classList.remove('visible');
     }
+    if (heroSocials) {
+        if (progress > 0.50) {
+            heroSocials.classList.add('socials-hidden');
+        } else {
+            heroSocials.classList.remove('socials-hidden');
+        }
+    }
 }
 handleHeroScroll();
 window.addEventListener('scroll', handleHeroScroll, { passive: true });
 window.addEventListener('resize', handleHeroScroll);
 
-
-
-// const mainNav = document.getElementById('main-nav');
-// const heroLogo = document.getElementById('hero-logo-container');
-// const heroContent = document.getElementById('hero-content');
-
-// window.addEventListener('scroll', () => {
-//     const scrollY = window.scrollY;
-
-//     // Navbar appearance
-//     if (scrollY > 150) {
-//         mainNav.classList.add('visible');
-//     } else {
-//         mainNav.classList.remove('visible');
-//     }
-
-//     // Hero Logo Morphing (Simple fade out and scale down as user scrolls)
-//     const morphThreshold = 300;
-//     const progress = Math.min(scrollY / morphThreshold, 1);
-
-//     if (heroLogo) {
-//         heroLogo.style.opacity = 1 - progress;
-//         heroLogo.style.transform = `scale(${1 - progress * 0.5}) translateY(-${progress * 50}px)`;
-
-//         if (progress >= 1) {
-//             heroLogo.style.visibility = 'hidden';
-//         } else {
-//             heroLogo.style.visibility = 'visible';
-//         }
-//     }
-// });
 
 // Fade-in animations on scroll
 const observerOptions = {
